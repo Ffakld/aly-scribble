@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#263E31">
+  <meta name="description" content="معاينة خط علي: خط عربي وإنجليزي مستلهم من رسم يدوي، مع التشكيل والتطويل والأرقام.">
+  <title>خط علي — ALY Scribble</title>
+  <style>
+    @font-face { font-family:ALY; src:url('ALYScribble-Regular.woff2') format('woff2'); font-style:normal; font-weight:400; font-display:block; }
+    @font-face { font-family:ALY; src:url('ALYScribble-Bold.woff2') format('woff2'); font-style:normal; font-weight:700; font-display:block; }
+    :root { --green:#263E31; --paper:#D8C6A7; --brown:#73543C; --line:rgb(115 84 60 / .2); --soft:rgb(115 84 60 / .075); --radius:22px; }
+    *, *::before, *::after { box-sizing:border-box; }
+    html { scroll-behavior:smooth; scroll-padding-top:24px; }
+    body { margin:0; background:var(--paper); color:var(--green); font-family:Tahoma,Arial,sans-serif; font-size:14px; line-height:1.9; -webkit-font-smoothing:antialiased; }
+    button, input, select, textarea { font:inherit; }
+    button, a, input, textarea, select { -webkit-tap-highlight-color:transparent; }
+    button, a { touch-action:manipulation; }
+    button { cursor:pointer; }
+    a { color:inherit; text-decoration:none; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline:3px solid var(--brown); outline-offset:4px; }
+    button { color:inherit; }
+    ::selection { background:var(--brown); color:var(--paper); }
+    h1, h2, h3, p { margin:0; }
+    svg { display:block; }
+    .wrap { width:min(1120px,calc(100% - 64px)); margin-inline:auto; }
+    .font { font-family:ALY,Tahoma,sans-serif; font-synthesis:none; }
+    .en { direction:ltr; unicode-bidi:isolate; }
+    .eyebrow { display:flex; align-items:center; gap:10px; color:var(--brown); font-size:11px; }
+    .eyebrow::before { content:""; width:24px; height:1px; background:currentColor; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; gap:24px; padding-block:25px; border-bottom:1px solid var(--line); }
+    .brand { display:flex; align-items:center; gap:12px; }
+    .brand-name { display:flex; gap:12px; align-items:baseline; font-size:31px; line-height:1.5; }
+    .brand-name .en { font-size:23px; }
+    .brand-symbol { width:31px; height:31px; color:var(--brown); }
+    .toplinks { display:flex; gap:24px; align-items:center; font-size:12px; }
+    .toplinks a { padding-block:4px; border-bottom:1px solid transparent; transition:border-color .16s ease; }
+    .toplinks a:hover { border-color:var(--brown); }
+    .edition { font-size:10px; color:var(--brown); white-space:nowrap; }
+    .intro { display:flex; align-items:center; justify-content:space-between; gap:32px; padding-block:38px 32px; }
+    .intro h1 { font-size:64px; font-weight:400; line-height:1.5; margin-block:3px 4px; }
+    .intro p { max-width:640px; font-size:13px; color:var(--brown); }
+    .intro-note { text-align:left; min-width:128px; color:var(--brown); font-size:11px; line-height:2.1; }
+    .intro-note strong { color:var(--green); font:400 31px/1.5 ALY; display:block; }
+    .tester { border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; scroll-margin-top:20px; }
+    .workspace { display:grid; grid-template-columns:minmax(0,1fr) 302px; }
+    .preview { position:relative; background:var(--green); color:var(--paper); min-width:0; min-height:485px; padding:28px 34px 20px; transition:background-color .2s ease,color .2s ease; display:flex; flex-direction:column; }
+    .preview[data-theme="paper"] { background:var(--paper); color:var(--brown); }
+    .preview[data-theme="light"] { background:color-mix(in srgb,var(--paper) 24%,white); color:var(--green); }
+    .preview-head { display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:10px; line-height:1.8; opacity:.72; }
+    .preview-label { display:flex; align-items:center; gap:7px; }
+    .preview-label::before { content:""; width:5px; height:5px; border-radius:50%; background:currentColor; }
+    .live { flex:1; display:flex; align-items:center; min-width:0; min-height:360px; padding-block:32px; }
+    #live { width:100%; margin:0; font-family:ALY,Tahoma,sans-serif; font-size:72px; font-weight:400; font-synthesis:none; line-height:2; white-space:pre-wrap; overflow-wrap:anywhere; word-break:normal; }
+    .preview-foot { display:flex; justify-content:space-between; gap:16px; opacity:.62; font-size:10px; }
+    .controls { padding:24px; background:rgb(115 84 60 / .045); border-inline-start:1px solid var(--line); }
+    .control-title { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-block-end:22px; }
+    .control-title h2 { font-size:15px; font-weight:400; }
+    .reset { border:0; background:transparent; color:var(--brown); font-size:11px; padding:4px 0; display:flex; align-items:center; gap:5px; }
+    .reset:hover { color:var(--green); }
+    .reset svg { width:12px; height:12px; }
+    .field { margin-block-end:20px; }
+    .label-row { display:flex; align-items:center; justify-content:space-between; margin-block-end:8px; gap:12px; }
+    label, .field-label { font-size:11px; color:var(--brown); }
+    output { font-size:12px; font-variant-numeric:tabular-nums; }
+    output span { font-size:10px; color:var(--brown); }
+    #entry { display:block; width:100%; min-height:93px; resize:vertical; max-height:220px; border:1px solid var(--line); background:transparent; color:var(--green); border-radius:10px; padding:11px 12px; font-size:14px; line-height:1.85; transition:border-color .16s ease; }
+    #entry:hover, #entry:focus { border-color:var(--brown); }
+    #size { display:block; width:100%; height:22px; padding:0; margin:0; accent-color:var(--green); cursor:pointer; }
+    .range-ends { display:flex; justify-content:space-between; color:var(--brown); font-size:9px; margin-block-start:3px; }
+    .select-wrap { position:relative; }
+    #weight { appearance:none; width:100%; border:1px solid var(--line); border-radius:9px; background:transparent; color:var(--green); padding:8px 11px 8px 32px; font-size:12px; cursor:pointer; }
+    .select-wrap svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); width:12px; height:12px; pointer-events:none; color:var(--brown); }
+    .palette { display:flex; gap:8px; }
+    .palette button { flex:1; display:flex; align-items:center; justify-content:center; gap:6px; border:1px solid var(--line); border-radius:8px; background:transparent; padding:7px 3px; font-size:10px; transition:border-color .15s ease,background-color .15s ease; }
+    .palette button[aria-pressed="true"] { border-color:var(--green); background:rgb(38 62 49 / .075); }
+    .swatch { width:12px; height:12px; border-radius:50%; border:1px solid rgb(115 84 60 / .3); background:var(--green); }
+    .swatch.paper { background:var(--paper); }
+    .swatch.light { background:color-mix(in srgb,var(--paper) 24%,white); }
+    .presets { padding:15px 24px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; border-top:1px solid var(--line); }
+    .presets span { font-size:11px; color:var(--brown); margin-inline-end:8px; }
+    .chip { padding:4px 11px; font-size:11px; background:transparent; border:1px solid var(--line); border-radius:6px; transition:background-color .16s ease,border-color .16s ease; }
+    .chip:hover { border-color:var(--brown); background:var(--soft); }
+    .chip[aria-pressed="true"] { background:var(--green); color:var(--paper); border-color:var(--green); }
+    .section { margin-block:48px; }
+    .section-head { display:flex; justify-content:space-between; align-items:baseline; gap:16px; margin-block-end:18px; }
+    .section-head h2 { font-weight:400; font-size:30px; line-height:1.5; }
+    .section-head p { font-size:11px; color:var(--brown); }
+    .samples { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+    .sample-card { padding:21px 24px 19px; min-width:0; display:flex; flex-direction:column; }
+    .sample-card + .sample-card { border-inline-start:1px solid var(--line); }
+    .sample-card:nth-child(2) { background:var(--soft); }
+    .sample-caption { font-size:10px; color:var(--brown); display:flex; justify-content:space-between; gap:8px; }
+    .sample-card .words { font-size:66px; font-weight:400; line-height:1.9; margin-block:12px; }
+    .sample-card .detail { font-size:28px; font-weight:400; line-height:2.1; }
+    .sample-card .latin { direction:ltr; text-align:left; font-size:42px; }
+    .sample-card .digits { direction:ltr; unicode-bidi:isolate; text-align:left; font-size:28px; line-height:1.9; overflow-wrap:anywhere; }
+    .note { margin-block-start:13px; font-size:11px; line-height:2; color:var(--brown); }
+    .note b { font-weight:400; color:var(--green); }
+    details { margin-block-start:20px; border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+    summary { cursor:pointer; padding:14px 20px; font-size:12px; list-style:none; display:flex; align-items:center; justify-content:space-between; }
+    summary::-webkit-details-marker { display:none; }
+    summary::after { content:"+"; font:20px/1 Arial,sans-serif; color:var(--brown); }
+    details[open] summary::after { content:"−"; }
+    summary:focus-visible { outline:3px solid var(--brown); outline-offset:-4px; }
+    .coverage { padding:0 20px 20px; border-top:1px solid var(--line); }
+    .coverage p { font-size:32px; line-height:2.2; padding-block:12px 0; overflow-wrap:anywhere; }
+    .coverage .en { display:block; font-size:26px; line-height:1.8; text-align:left; }
+    .download { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,.9fr); gap:40px; padding:31px 34px; background:var(--green); color:var(--paper); border-radius:var(--radius); }
+    .download .eyebrow { color:var(--paper); opacity:.66; }
+    .download h2 { font-size:39px; font-weight:400; line-height:1.6; margin-block:6px 10px; }
+    .download p { font-size:12px; opacity:.83; line-height:2; max-width:540px; }
+    .download-actions { align-self:center; }
+    .download-buttons { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .download-button { padding:11px 14px; background:var(--paper); color:var(--green); border:1px solid var(--paper); border-radius:9px; display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:12px; transition:background-color .16s ease,transform .16s ease; }
+    .download-button:hover { transform:translateY(-2px); background:color-mix(in srgb,var(--paper) 84%,white); }
+    .download-button svg { width:15px; height:15px; }
+    .download-links { display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; font-size:10px; padding-block-start:15px; }
+    .download-links a { border-bottom:1px solid rgb(216 198 167 / .35); }
+    .download-links a:hover { border-color:var(--paper); }
+    .install-note { margin-block-start:15px; padding-block-start:15px; border-top:1px solid rgb(216 198 167 / .2); font-size:10px !important; }
+    footer { margin-block:30px 24px; display:flex; align-items:center; justify-content:space-between; gap:18px; font-size:10px; color:var(--brown); }
+    footer .signature { font:400 24px/1.5 ALY; color:var(--green); }
+    .reveal { animation:appear .55s ease both; }
+    @keyframes appear { from { opacity:0; transform:translateY(7px); } to { opacity:1; transform:translateY(0); } }
+    @media (max-width:850px) {
+      .wrap { width:calc(100% - 40px); }
+      .workspace { grid-template-columns:minmax(0,1fr) 265px; }
+      .controls { padding:20px; }
+      .preview { padding:24px; }
+      .intro-note { display:none; }
+      .samples { grid-template-columns:1fr 1fr; }
+      .sample-card:last-child { grid-column:1/-1; border-inline-start:0; border-top:1px solid var(--line); }
+      .sample-card:last-child .words { margin-block:6px; }
+      .sample-card:last-child .digits { display:inline-block; margin-inline-end:24px; }
+      .download { gap:24px; padding:26px; grid-template-columns:1fr; }
+      .download-actions { max-width:480px; width:100%; }
+    }
+    @media (max-width:620px) {
+      .wrap { width:calc(100% - 32px); }
+      .topbar { padding-block:18px; gap:14px; }
+      .brand { gap:8px; }
+      .brand-symbol { width:24px; height:24px; }
+      .brand-name { font-size:25px; gap:9px; }
+      .brand-name .en { font-size:19px; }
+      .toplinks { gap:14px; font-size:10px; }
+      .toplinks a:first-child { display:none; }
+      .edition { display:none; }
+      .intro { padding-block:27px 24px; }
+      .intro h1 { font-size:46px; line-height:1.7; }
+      .intro p { font-size:12px; }
+      .workspace { display:flex; flex-direction:column; }
+      .preview { min-height:340px; padding:20px; }
+      .live { min-height:250px; padding-block:20px; }
+      #live { font-size:60px; line-height:2; }
+      .preview-head, .preview-foot { font-size:9px; }
+      .controls { border-inline-start:0; border-top:1px solid var(--line); padding:20px; }
+      .control-title { margin-block-end:14px; }
+      .control-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+      .field { margin-block-end:16px; }
+      .control-grid .field { margin-block-end:0; min-width:0; }
+      .palette-field { margin-block:16px 0; }
+      #entry { min-height:80px; }
+      .presets { padding:14px 18px; gap:7px; }
+      .presets span { width:100%; margin:0 0 2px; }
+      .section { margin-block:33px; }
+      .section-head { display:block; margin-block-end:13px; }
+      .section-head h2 { font-size:28px; }
+      .section-head p { margin-block-start:5px; font-size:10px; }
+      .sample-card { padding:16px; }
+      .sample-card .words { font-size:53px; margin-block:8px; }
+      .sample-card .detail { font-size:25px; }
+      .sample-card .latin { font-size:39px; }
+      .sample-card .digits { font-size:27px; }
+      .sample-caption { font-size:9px; }
+      .coverage p { font-size:27px; }
+      .coverage .en { font-size:23px; }
+      .download { padding:24px 20px; gap:21px; }
+      .download h2 { font-size:35px; }
+      .download p { font-size:11px; }
+      .download-button { padding:10px 12px; font-size:11px; }
+      footer { align-items:flex-start; font-size:9px; }
+      footer .en { max-width:220px; text-align:left; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      html { scroll-behavior:auto; }
+      *, *::before, *::after { animation:none !important; transition:none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="خط علي، بداية الصفحة">
+        <svg class="brand-symbol" viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M9 24C-1 14 21 1 22 15S7 41 5 22 33 5 34 19 11 33 19 7 37 24 26 30" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="brand-name font">علي <span class="en">ALY</span></span>
+      </a>
+      <nav class="toplinks" aria-label="التنقل في المعاينة">
+        <a href="#tester">جرّب الخط</a><a href="#samples">الحروف</a><a href="#download">تحميل الخط <span aria-hidden="true">↙</span></a>
+      </nav>
+      <span class="edition en" lang="en">PERSONAL TYPE / 01</span>
+    </header>
+
+    <main>
+      <section class="intro reveal" aria-labelledby="intro-title">
+        <div>
+          <span class="eyebrow">خط علي · <bdi lang="en">ALY Scribble</bdi></span>
+          <h1 class="font" id="intro-title">حروف تشبهك.</h1>
+          <p>روح الرسم اليدوي، بلمسة هادئة وواضحة. عربي وإنجليزي، مع التشكيل والتطويل والأرقام.</p>
+        </div>
+        <div class="intro-note"><strong dir="ltr">Made to feel yours.</strong><span>وزنان · عادي وعريض<br>مفتوح المصدر — <bdi lang="en">SIL OFL 1.1</bdi></span></div>
+      </section>
+
+      <section id="tester" class="tester reveal" aria-label="معاينة خط علي">
+        <div class="workspace">
+          <div class="preview" id="preview" data-theme="dark">
+            <div class="preview-head"><span class="preview-label">معاينة مباشرة</span><span id="preview-meta"><bdi>ALY / Regular / 72 px</bdi></span></div>
+            <div class="live"><div id="live" dir="auto" role="region" aria-label="نتيجة معاينة النص بخط علي">علي · لقطات
+عَلِيٌّ · مُصَوِّرٌ
+عــــلــــي</div></div>
+            <div class="preview-foot"><span>اكتب نصك، وخذ راحتك.</span><span dir="ltr">#263E31 / #D8C6A7</span></div>
+          </div>
+
+          <aside class="controls" aria-labelledby="controls-title">
+            <div class="control-title"><h2 id="controls-title">على ذوقك</h2><button class="reset" id="reset" type="button"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 5V2M3 5H6M3 5a5 5 0 1 1-1 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg> إعادة ضبط</button></div>
+            <div class="field">
+              <div class="label-row"><label for="entry">النص</label><span class="en" style="font-size:10px;color:var(--brown)" lang="en">Your words</span></div>
+              <textarea id="entry" dir="auto" spellcheck="false" aria-describedby="entry-hint">علي · لقطات
+عَلِيٌّ · مُصَوِّرٌ
+عــــلــــي</textarea>
+              <span id="entry-hint" style="display:block;font-size:9px;color:var(--brown);margin-top:5px">العربية والإنجليزية في المساحة نفسها.</span>
+            </div>
+            <div class="control-grid">
+              <div class="field">
+                <div class="label-row"><label for="size">حجم الخط</label><output id="size-label" for="size"><bdi id="size-value">72</bdi> <span>px</span></output></div>
+                <input id="size" type="range" min="24" max="128" step="1" value="72">
+                <div class="range-ends" dir="ltr" aria-hidden="true"><span>24</span><span>128</span></div>
+              </div>
+              <div class="field">
+                <div class="label-row"><label for="weight">وزن الخط</label></div>
+                <div class="select-wrap"><select id="weight"><option value="400">عادي · Regular</option><option value="700">عريض · Bold</option></select><svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="m3 4.5 3 3 3-3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              </div>
+            </div>
+            <div class="field palette-field">
+              <div class="label-row"><span class="field-label" id="palette-label">خلفية المعاينة</span></div>
+              <div class="palette" role="group" aria-labelledby="palette-label">
+                <button type="button" data-theme="dark" aria-pressed="true"><span class="swatch" aria-hidden="true"></span> داكنة</button>
+                <button type="button" data-theme="paper" id="palette" aria-pressed="false"><span class="swatch paper" aria-hidden="true"></span> ورق</button>
+                <button type="button" data-theme="light" aria-pressed="false"><span class="swatch light" aria-hidden="true"></span> فاتحة</button>
+              </div>
+            </div>
+          </aside>
+        </div>
+        <div class="presets" role="group" aria-label="نصوص جاهزة للتجربة">
+          <span>ابدأ بكلمة</span>
+          <button class="chip" type="button" data-preset="ali" aria-pressed="false">علي</button>
+          <button class="chip" type="button" data-preset="photography" aria-pressed="false">لقطات</button>
+          <button class="chip" type="button" data-preset="marks" aria-pressed="false">تشكيل</button>
+          <button class="chip" type="button" data-preset="stretch" aria-pressed="false">تطويل</button>
+          <button class="chip en" type="button" data-preset="english" aria-pressed="false" lang="en">English</button>
+          <button class="chip" type="button" data-preset="numbers" aria-pressed="false">أرقام</button>
+        </div>
+      </section>
+
+      <section class="section" id="samples" aria-labelledby="samples-title">
+        <div class="section-head"><h2 id="samples-title" class="font">نفس الروح، أكثر من لغة.</h2><p>قلم يدوي، وصلات عربية، وتفاصيل لها مساحتها.</p></div>
+        <div class="samples">
+          <article class="sample-card"><div class="sample-caption"><span>العربية</span><span class="en">01</span></div><p class="words font">علي · صور</p><p class="detail font">عَلِيٌّ · مُصَوِّرٌ</p><p class="detail font">عـلـي · عــــلــــي</p></article>
+          <article class="sample-card"><div class="sample-caption"><span>العريض والتشكيل</span><span class="en">02</span></div><p class="words font" style="font-weight:700">ضوء · ظل</p><p class="detail font">قَهْوَةٌ · مُصَوِّرٌ</p><p class="detail font">يَوْمِيَّاتٌ · لَقَطَاتٌ</p></article>
+          <article class="sample-card"><div class="sample-caption"><span>الإنجليزية والأرقام</span><span class="en">03</span></div><p class="words font latin" lang="en">ALY / Coffee</p><p class="detail font latin" style="font-size:28px" lang="en">Photography &amp; Gaming</p><p class="digits font">0123456789<br>٠١٢٣٤٥٦٧٨٩</p></article>
+        </div>
+        <p class="note"><b>التطويل «ـ»</b> يمد الوصلة بين الحروف. أما المدّة في «آ» فهي علامة مختلفة. جرّب الحجم والتشكيل في النص الذي ستستخدمه فعلًا.</p>
+        <details>
+          <summary>كل الحروف والرموز</summary>
+          <div class="coverage font">
+            <p>أ ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي</p>
+            <p>ا آ إ ؤ ئ ء ة ى ـ · لا لأ لإ لآ · بَبِبُ بْ بّ بَّ بِّ بُّ</p>
+            <p class="en" lang="en">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz<br>@ # &amp; ! ? + − = % ( ) [ ] « »</p>
+            <p class="en">0123456789 / ٠١٢٣٤٥٦٧٨٩ / ۰۱۲۳۴۵۶۷۸۹</p>
+            <p>، ؛ ؟ ٪</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="download" id="download" aria-labelledby="download-title">
+        <div>
+          <span class="eyebrow">ملفات الخط</span><h2 class="font" id="download-title">خذه معك.</h2>
+          <p>احفظ ملف <bdi>TTF</bdi> واستورده في تطبيق التصميم الذي يدعم الخطوط المحلية. الحزمة تشمل ملفات المصدر ورخصة <bdi>SIL Open Font License 1.1</bdi> للاستخدام والتعديل والمشاركة وفق شروطها.</p>
+          <p class="install-note">على الجوال والآيباد، الاستخدام يعتمد على الجهاز والتطبيق. تثبيت الخط لا يغيّر خط النظام أو بايو الحسابات تلقائيًا. تجد التفاصيل في دليل الاستخدام.</p>
+        </div>
+        <div class="download-actions">
+          <div class="download-buttons">
+            <a class="download-button" href="ALYScribble-Regular.ttf" download><span>الوزن العادي <small class="en">TTF</small></span><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 2v9m-3-3 3 3 3-3M3 12v3h12v-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            <a class="download-button" href="ALYScribble-Bold.ttf" download><span>الوزن العريض <small class="en">TTF</small></span><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 2v9m-3-3 3 3 3-3M3 12v3h12v-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          </div>
+          <div class="download-links"><a href="ALY-Scribble-OpenSource.zip" download>حزمة الخط والمصدر ↓</a><a href="README-ar.md">دليل الاستخدام بالعربية ↗</a><a href="OFL.txt">الرخصة المفتوحة ↗</a></div>
+        </div>
+      </section>
+    </main>
+    <footer><span class="signature">علي <bdi>ALY</bdi></span><span class="en" lang="en">ALY Scribble · SIL OFL 1.1<br>© 2026 The ALY Project Authors</span></footer>
+  </div>
+  <script>
+    (() => {
+      'use strict';
+      const entry = document.getElementById('entry');
+      const size = document.getElementById('size');
+      const weight = document.getElementById('weight');
+      const live = document.getElementById('live');
+      const preview = document.getElementById('preview');
+      const sizeValue = document.getElementById('size-value');
+      const meta = document.getElementById('preview-meta');
+      const paletteButtons = [...document.querySelectorAll('.palette button')];
+      const presetButtons = [...document.querySelectorAll('[data-preset]')];
+      const initialText = entry.value;
+      const initialSize = window.matchMedia('(max-width:620px)').matches ? '60' : '72';
+      const presets = {
+        ali: 'علي\nعَلِيٌّ',
+        photography: 'لقطات من يومي\nقهوة · ضوء · تصوير',
+        marks: 'عَلِيٌّ · مُصَوِّرٌ\nقَهْوَةٌ · لَقَطَاتٌ\nفَتْحَةً · كَسْرَةٍ · ضَمَّةٌ · سُكُونْ',
+        stretch: 'علي · عـلـي\nعــــلــــي\nلـقـطـات · صـور',
+        english: 'ALY / Coffee\nPhotography & Gaming\nFrames from my day.',
+        numbers: '0123456789\n٠١٢٣٤٥٦٧٨٩\n۰۱۲۳۴۵۶۷۸۹\n2026 / ٢٠٢٦'
+      };
+      function update() {
+        live.textContent = entry.value;
+        live.dir = /\p{L}/u.test(entry.value) ? 'auto' : 'ltr';
+        live.style.fontSize = size.value + 'px';
+        live.style.fontWeight = weight.value;
+        sizeValue.textContent = size.value;
+        meta.firstElementChild.textContent = 'ALY / ' + (weight.value === '700' ? 'Bold' : 'Regular') + ' / ' + size.value + ' px';
+      }
+      function clearPreset() { presetButtons.forEach(button => button.setAttribute('aria-pressed', 'false')); }
+      function setTheme(theme) {
+        preview.dataset.theme = theme;
+        paletteButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.theme === theme)));
+        const foot = preview.querySelector('.preview-foot span:last-child');
+        foot.textContent = theme === 'dark' ? '#263E31 / #D8C6A7' : theme === 'paper' ? '#D8C6A7 / #73543C' : 'ALY / Light';
+      }
+      entry.addEventListener('input', () => { clearPreset(); update(); });
+      size.addEventListener('input', update);
+      weight.addEventListener('change', update);
+      paletteButtons.forEach(button => button.addEventListener('click', () => setTheme(button.dataset.theme)));
+      presetButtons.forEach(button => button.addEventListener('click', () => {
+        entry.value = presets[button.dataset.preset];
+        clearPreset();
+        button.setAttribute('aria-pressed', 'true');
+        update();
+      }));
+      document.getElementById('reset').addEventListener('click', () => {
+        entry.value = initialText;
+        size.value = initialSize;
+        weight.value = '400';
+        clearPreset();
+        setTheme('dark');
+        update();
+      });
+      size.value = initialSize;
+      update();
+    })();
+  </script>
+</body>
+</html>
